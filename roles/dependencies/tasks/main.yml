@@ -1,0 +1,30 @@
+---
+
+- name: Set timezone to US/Pacific
+  timezone:
+    name: US/Pacific
+
+- name: Reload ansible_facts
+  setup:
+
+- name: Install EPEL repo.
+  yum:
+    name: "{{ epel_repo_url }}"
+    state: present
+
+- name: Install required packages
+  yum:
+    name:
+      - nano
+      - epel-release
+      - yum-utils
+      - git
+      - jpegoptim
+      - ImageMagick
+    state: present
+  become: yes
+
+- name: Update all packages
+  yum:
+    name: "*"
+    state: latest

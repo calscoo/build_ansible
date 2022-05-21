@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+**/inventory.yml
+**/inventory
+**/hosts.yml
+**/hosts
+roles/build_ecommerce/files/items/**

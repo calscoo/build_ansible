@@ -1,0 +1,9 @@
+---
+
+- hosts: build
+  roles:
+    - { role: dependencies, become: yes, tags: dependencies }
+    - { role: node, become: yes, tags: node }
+    - { role: angular, become: yes, tags: angular }
+    - { role: build_ecommerce, become: yes, tags: [ never, build_ecommerce ] }
+    - { role: build_portfolio, become: yes, tags: [ never, build_portfolio ] }
