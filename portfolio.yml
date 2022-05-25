@@ -1,0 +1,5 @@
+---
+
+- hosts: build
+  roles:
+    - { role: deploy_portfolio, become: yes, tags: deploy_portfolio }

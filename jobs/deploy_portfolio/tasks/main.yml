@@ -1,0 +1,35 @@
+---
+
+- name: Git checkout
+  ansible.builtin.git:
+    repo: "{{ repo }}"
+    dest: "{{ repo_dir }}"
+    version: main
+    force: yes
+  tags: checkout
+
+- name: Install angular dependencies
+  shell: "cd {{ repo_dir }} && npm install --force"
+
+- name: Build production artifacts
+  shell: "cd {{ repo_dir }} && ng build --prod"
+
+- name: Compress production artifacts
+  archive:
+    path: "{{ artifact_build_dir }}"
+    dest: "{{ comp_production_artifact }}"
+    format: zip
+
+- name: Deploy production artifacts (you'll have to accept the fingerprint manually on the first run)
+  shell: 'rsync -az -e "ssh -i {{ ssh_private_key_file }}" {{ comp_production_artifact }} {{ ansible_user }}@{{ hostvars["portfolio"].ansible_host }}:{{ comp_production_artifact }}'
+  become: no
+  tags: deploy
+
+- name: Unpack production artifacts
+  unarchive:
+    src: "{{ comp_production_artifact }}"
+    dest: "{{ web_dir }}"
+    remote_src: yes
+  delegate_to: portfolio
+  notify: restart nginx
+  tags: deploy

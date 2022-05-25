@@ -62,28 +62,31 @@
     dest: "{{ items_full_dir }}image_processing.sh"
     mode: a+x
 
-#- name: Disable webserver during build
-#  service:
-#    name: "nginx"
-#    state: stopped
-
 - name: Process images
   shell: "cd {{ items_full_dir }} && ./image_processing.sh"
 
-- name: Install project dependencies
+- name: Install angular dependencies
   shell: "cd {{ repo_dir }} && npm install --force"
 
 - name: Build production artifacts
   shell: "cd {{ repo_dir }} && ng build --prod"
 
-#- name: Create empty nginx web directory
-#  file:
-#    path: "{{ web_dir }}"
-#    state: "{{ item }}"
-#  with_items:
-#    - absent
-#    - directory
+- name: Compress production artifacts
+  archive:
+    path: "{{ artifact_build_dir }}"
+    dest: "{{ comp_production_artifact }}"
+    format: zip
 
-#- name: Place production artifacts
-#  shell: "cp -R {{ artifact_build_dir }}. {{ web_dir }}"
-#  notify: restart nginx
+- name: Deploy production artifacts (you'll have to accept the fingerprint manually on the first run)
+  shell: 'rsync -az -e "ssh -i {{ ssh_private_key_file }}" {{ comp_production_artifact }} {{ ansible_user }}@{{ hostvars["ecommerce"].ansible_host }}:{{ comp_production_artifact }}'
+  become: no
+  tags: deploy
+
+- name: Unpack production artifacts
+  unarchive:
+    src: "{{ comp_production_artifact }}"
+    dest: "{{ web_dir }}"
+    remote_src: yes
+  delegate_to: ecommerce
+  notify: restart nginx
+  tags: deploy

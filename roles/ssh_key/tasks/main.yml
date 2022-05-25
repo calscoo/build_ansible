@@ -1,0 +1,20 @@
+---
+
+- name: Set ssh_public_key
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ ssh_public_key }}"
+  become: no
+
+- name: Set ssh_private_key
+  shell: |
+    echo -e "{{ ssh_private_key }}" >> {{ ssh_private_key_file }}
+  args:
+    creates: "{{ ssh_private_key_file }}"
+  become: no
+
+- name: Set ssh_private_key permission
+  file:
+    path: "{{ ssh_private_key_file }}"
+    mode: "0600"
