@@ -1,0 +1,21 @@
+---
+
+- name: Start the build server
+  shell: 'aws ec2 start-instances --instance-ids {{ hostvars["build"].ansible_instance_id }}'
+  register: result
+  until: "{{ result.stdout | from_json | json_query('StartingInstances[0].CurrentState.Name') == 'running' }}"
+  retries: 10
+  delay: 3
+  become: no
+  when: "{{ power_state == 'start' }}"
+  tags: start_build
+
+- name: Stop the build server
+  shell: 'aws ec2 stop-instances --instance-ids {{ hostvars["build"].ansible_instance_id }}'
+  register: result
+  until: "{{ result.stdout | from_json | json_query('StoppingInstances[0].CurrentState.Name') == 'stopping' }}"
+  retries: 10
+  delay: 3
+  become: no
+  when: "{{ power_state == 'stop' }}"
+  tags: stop_build

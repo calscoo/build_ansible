@@ -1,5 +1,17 @@
 ---
 
+- hosts: localhost
+  vars:
+    power_state: "start"
+  roles:
+    - { role: toggle_build_power_state, tags: toggle_build_power_state }
+
 - hosts: build
   roles:
     - { role: deploy_ecommerce, become: yes, tags: deploy_ecommerce }
+
+- hosts: localhost
+  vars:
+    power_state: "stop"
+  roles:
+    - { role: toggle_build_power_state, tags: toggle_build_power_state }

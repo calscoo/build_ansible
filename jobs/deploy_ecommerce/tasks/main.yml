@@ -50,6 +50,7 @@
   copy:
     src: "items"
     dest: "{{ images_full_dir }}"
+    force: no
 
 - name: Side load image metadata
   template:
