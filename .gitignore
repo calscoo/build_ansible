@@ -4,4 +4,4 @@
 **/inventory
 **/hosts.yml
 **/hosts
-roles/build_ecommerce/files/items/**
+jobs/deploy_ecommerce/files/items/**
