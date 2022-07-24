@@ -15,4 +15,3 @@
     power_state: "stop"
   roles:
     - { role: toggle_build_power_state, tags: toggle_build_power_state }
-  test: "test"
